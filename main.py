@@ -1,10 +1,5 @@
 import streamlit as st
-from P import page_data_loading as data_loading
-from P import page_data_exploration as data_exploration
-from P import page_data_preprocessing as data_preprocessing
-from P import page_data_grouping as data_grouping
-from P import page_model_training as model_training
-from P import page_model_saving as model_saving
+from PG import data_loading, data_exploration, data_preprocessing, data_grouping, model_training, model_saving
 
 def main():
     st.set_page_config(page_title="Analyse de données et ML", layout="wide")
