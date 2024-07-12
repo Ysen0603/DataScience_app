@@ -72,3 +72,11 @@ def preprocess_data():
             st.info("Veuillez sélectionner au moins une colonne à prétraiter.")
     else:
         st.warning("Aucune donnée n'a été chargée. Veuillez d'abord charger un fichier dans la section 'Chargement des données'.")
+    if st.button("Réinitialiser les données"):
+            if 'original_data' in st.session_state:
+                st.session_state.data = st.session_state.original_data.copy()
+                st.success("Données réinitialisées à l'état original!")
+                st.write("Aperçu des données originales:")
+                st.write(st.session_state.data.head())
+            else:
+                st.warning("Aucune donnée originale disponible pour la réinitialisation.")
