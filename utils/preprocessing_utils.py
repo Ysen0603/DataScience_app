@@ -32,3 +32,26 @@ def handle_missing_values(df, columns, method):
     
     df[columns] = imputer.fit_transform(df[columns])
     return df
+
+def detect_column_types(df):
+    numeric_columns = df.select_dtypes(include=[np.number]).columns
+    categorical_columns = df.select_dtypes(exclude=[np.number]).columns
+    return numeric_columns, categorical_columns
+
+def handle_outliers(df, columns, method='IQR'):
+    for col in columns:
+        if method == 'IQR':
+            Q1 = df[col].quantile(0.25)
+            Q3 = df[col].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            df[col] = df[col].clip(lower_bound, upper_bound)
+    return df
+
+def encode_high_cardinality(df, columns, max_categories=10):
+    for col in columns:
+        if df[col].nunique() > max_categories:
+            top_categories = df[col].value_counts().nlargest(max_categories).index
+            df[col] = df[col].where(df[col].isin(top_categories), 'Other')
+    return df

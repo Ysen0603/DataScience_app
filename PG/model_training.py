@@ -73,6 +73,7 @@ def train_model_page():
                                best_params=model.get_params() if use_grid_search else None)
                     st.success(f"Modèle sauvegardé sous le nom : {model_name}")
 
+
                 st.session_state.model = model
                 st.session_state.feature_columns = feature_columns
                 st.session_state.target_column = target_column
