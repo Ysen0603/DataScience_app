@@ -7,6 +7,7 @@ from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 import joblib
 import streamlit as st
+from sklearn.preprocessing import label_binarize
 
 def train_model(X_train, X_test, y_train, model_type, algorithm, use_grid_search=False):
     if model_type == "Classification":
@@ -44,21 +45,49 @@ def train_model(X_train, X_test, y_train, model_type, algorithm, use_grid_search
 
 def visualize_results(model, X_test, y_test, model_type):
     if model_type == "Classification":
-        # Courbe ROC
-        y_pred_proba = model.predict_proba(X_test)[:, 1]
-        fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
-        roc_auc = auc(fpr, tpr)
-        
-        plt.figure()
-        plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
-        plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('Receiver Operating Characteristic (ROC) Curve')
-        plt.legend(loc="lower right")
-        return plt
+        # Prédictions
+        if hasattr(model, "predict_proba"):
+            y_pred_proba = model.predict_proba(X_test)
+        else:
+            y_pred_proba = model.decision_function(X_test)
+
+        # Binarize the output if it's multiclass
+        if len(set(y_test)) > 2:
+            y_test_bin = label_binarize(y_test, classes=list(set(y_test)))
+            n_classes = y_test_bin.shape[1]
+            fpr = dict()
+            tpr = dict()
+            roc_auc = dict()
+            for i in range(n_classes):
+                fpr[i], tpr[i], _ = roc_curve(y_test_bin[:, i], y_pred_proba[:, i])
+                roc_auc[i] = auc(fpr[i], tpr[i])
+            # Plot all ROC curves
+            plt.figure()
+            colors = ['aqua', 'darkorange', 'cornflowerblue']
+            for i, color in enumerate(colors[:n_classes]):
+                plt.plot(fpr[i], tpr[i], color=color, lw=2,
+                         label=f'ROC curve of class {i} (AUC = {roc_auc[i]:.2f})')
+            plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+            plt.xlim([0.0, 1.0])
+            plt.ylim([0.0, 1.05])
+            plt.xlabel('False Positive Rate')
+            plt.ylabel('True Positive Rate')
+            plt.title('Receiver Operating Characteristic (ROC) Curve')
+            plt.legend(loc="lower right")
+            return plt
+        else:
+            fpr, tpr, _ = roc_curve(y_test, y_pred_proba[:, 1])
+            roc_auc = auc(fpr, tpr)
+            plt.figure()
+            plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
+            plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+            plt.xlim([0.0, 1.0])
+            plt.ylim([0.0, 1.05])
+            plt.xlabel('False Positive Rate')
+            plt.ylabel('True Positive Rate')
+            plt.title('Receiver Operating Characteristic (ROC) Curve')
+            plt.legend(loc="lower right")
+            return plt
     else:
         # Graphique des résidus
         y_pred = model.predict(X_test)

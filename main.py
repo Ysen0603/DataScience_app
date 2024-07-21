@@ -20,7 +20,7 @@ def main():
         background-color: #f0f2f6;
     }
     h1 {
-        color: #4CAF66;
+        color: #fd5c63;
         font-size: 2.5rem;
         font-weight: bold;
         margin-bottom: 2rem;

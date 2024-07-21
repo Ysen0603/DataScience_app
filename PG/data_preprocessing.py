@@ -66,6 +66,7 @@ def preprocess_data():
                     st.session_state.data = df
                     st.write("Aperçu des données prétraitées:")
                     st.write(df.head())
+                    st.write(df.isnull().sum())
                 except Exception as e:
                     st.error(f"Erreur lors du prétraitement: {e}")
         else:

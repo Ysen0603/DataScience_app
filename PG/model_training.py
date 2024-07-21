@@ -1,7 +1,9 @@
 import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
-from utils.model_utils import train_model, visualize_results, get_feature_importance, perform_cross_validation, save_model
+from utils.model_utils import train_model, visualize_results, get_feature_importance, perform_cross_validation
+import joblib
+import tempfile
 
 def train_model_page():
     st.header("Entraînement du modèle")
@@ -66,13 +68,15 @@ def train_model_page():
                     st.write(f"Score moyen : {cv_scores.mean():.2f} (+/- {cv_scores.std() * 2:.2f})")
 
                 # Sauvegarde du modèle
-                st.subheader("Sauvegarde du modèle")
+                st.header("Sauvegarder le modèle dans la page suivante")
                 model_name = st.text_input("Nom du fichier pour sauvegarder le modèle", "mon_modele.joblib")
-                if st.button("Sauvegarder le modèle"):
-                    save_model(model, f"/models/saved_models/{model_name}", feature_columns, target_column, 
-                               best_params=model.get_params() if use_grid_search else None)
-                    st.success(f"Modèle sauvegardé sous le nom : {model_name}")
+                if st.button("Télécharger le modèle"):
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".joblib") as tmp_file:
+                        joblib.dump(model, tmp_file.name)
+                        tmp_file_path = tmp_file.name
 
+                    with open(tmp_file_path, "rb") as f:
+                        st.download_button(label="Télécharger le modèle", data=f, file_name=model_name)
 
                 st.session_state.model = model
                 st.session_state.feature_columns = feature_columns

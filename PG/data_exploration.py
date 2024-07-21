@@ -39,7 +39,7 @@ def explore_data():
             if st.checkbox("Afficher la matrice de corrélation"):
                 st.subheader("Corrélation entre les variables numériques")
                 corr = df[numeric_cols].corr()
-                fig, ax = plt.subplots(figsize=(10, 8))
+                fig, ax = plt.subplots(figsize=(10, 3))
                 sns.heatmap(corr, annot=True, cmap='coolwarm', ax=ax)
                 st.pyplot(fig)
         else:
