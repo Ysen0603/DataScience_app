@@ -6,82 +6,82 @@ import joblib
 import tempfile
 
 def train_model_page():
-    st.header("Entraînement du modèle")
+    st.header("Model Training")
 
     if st.session_state.data is not None:
         df = st.session_state.data
 
-        st.subheader("Sélection des caractéristiques et de la cible")
-        target_column = st.selectbox("Choisissez la colonne cible", df.columns)
-        feature_columns = st.multiselect("Choisissez les colonnes de caractéristiques", [col for col in df.columns if col != target_column])
+        st.subheader("Feature and Target Selection")
+        target_column = st.selectbox("Choose the target column", df.columns)
+        feature_columns = st.multiselect("Choose feature columns", [col for col in df.columns if col != target_column])
 
         if feature_columns:
             X = df[feature_columns]
             y = df[target_column]
 
-            st.subheader("Sélection du type de modèle")
-            model_type = st.radio("Choisissez le type de modèle", ["Classification", "Régression"])
+            st.subheader("Model Type Selection")
+            model_type = st.radio("Choose model type", ["Classification", "Regression"])
 
-            st.subheader("Sélection de l'algorithme")
+            st.subheader("Algorithm Selection")
             if model_type == "Classification":
-                algorithm = st.selectbox("Choisissez l'algorithme de classification", ["Régression logistique", "Arbre de décision", "Forêt aléatoire"])
+                algorithm = st.selectbox("Choose classification algorithm", ["Logistic Regression", "Decision Tree", "Random Forest"])
             else:
-                algorithm = st.selectbox("Choisissez l'algorithme de régression", ["Régression linéaire", "Arbre de décision", "Forêt aléatoire"])
+                algorithm = st.selectbox("Choose regression algorithm", ["Linear Regression", "Decision Tree", "Random Forest"])
 
-            test_size = st.slider("Taille de l'ensemble de test", 0.1, 0.5, 0.2, 0.05)
-            use_grid_search = st.checkbox("Utiliser GridSearch pour optimiser les hyperparamètres")
-            perform_cv = st.checkbox("Effectuer une validation croisée")
+            test_size = st.slider("Test set size", 0.1, 0.5, 0.2, 0.05)
+            use_grid_search = st.checkbox("Use GridSearch for hyperparameter optimization")
+            perform_cv = st.checkbox("Perform cross-validation")
 
-            if st.button("Entraîner le modèle"):
+            if st.button("Train Model"):
                 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
                 model, y_pred = train_model(X_train, X_test, y_train, model_type, algorithm, use_grid_search)
 
-                st.success("Modèle entraîné avec succès!")
+                st.success("Model trained successfully!")
                 
                 if model_type == "Classification":
                     accuracy = accuracy_score(y_test, y_pred)
-                    st.write(f"Précision du modèle : {accuracy:.2f}")
+                    st.write(f"Model Accuracy: {accuracy:.2f}")
                 else:
                     mse = mean_squared_error(y_test, y_pred)
                     r2 = r2_score(y_test, y_pred)
-                    st.write(f"Erreur quadratique moyenne : {mse:.2f}")
-                    st.write(f"Score R² : {r2:.2f}")
+                    st.write(f"Mean Squared Error: {mse:.2f}")
+                    st.write(f"R² Score: {r2:.2f}")
 
-                # Visualisation des résultats
-                st.subheader("Visualisation des résultats")
+                # Visualize results
+                st.subheader("Visualize Results")
                 fig = visualize_results(model, X_test, y_test, model_type)
                 st.pyplot(fig)
 
                 # Feature importance
-                st.subheader("Importance des caractéristiques")
+                st.subheader("Feature Importance")
                 fig_importance = get_feature_importance(model, feature_columns)
                 if fig_importance:
                     st.pyplot(fig_importance)
                 else:
-                    st.write("L'importance des caractéristiques n'est pas disponible pour ce modèle.")
+                    st.write("Feature importance is not available for this model.")
 
-                # Validation croisée
+                # Cross-validation
                 if perform_cv:
-                    st.subheader("Résultats de la validation croisée")
+                    st.subheader("Cross-Validation Results")
                     cv_scores = perform_cross_validation(model, X, y)
-                    st.write(f"Scores de validation croisée : {cv_scores}")
-                    st.write(f"Score moyen : {cv_scores.mean():.2f} (+/- {cv_scores.std() * 2:.2f})")
+                    st.write(f"Cross-validation scores: {cv_scores}")
+                    st.write(f"Mean score: {cv_scores.mean():.2f} (+/- {cv_scores.std() * 2:.2f})")
 
-                # Sauvegarde du modèle
-                st.header("Sauvegarder le modèle dans la page suivante")
-                model_name = st.text_input("Nom du fichier pour sauvegarder le modèle", "mon_modele.joblib")
-                if st.button("Télécharger le modèle"):
+                # Save model
+                st.header("Save Model on the Next Page")
+                model_name = st.text_input("File name to save the model", "my_model.joblib")
+                if st.button("Download Model"):
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".joblib") as tmp_file:
                         joblib.dump(model, tmp_file.name)
                         tmp_file_path = tmp_file.name
 
                     with open(tmp_file_path, "rb") as f:
-                        st.download_button(label="Télécharger le modèle", data=f, file_name=model_name)
+                        st.download_button(label="Download Model", data=f, file_name=model_name)
 
                 st.session_state.model = model
                 st.session_state.feature_columns = feature_columns
                 st.session_state.target_column = target_column
         else:
-            st.info("Veuillez sélectionner au moins une colonne de caractéristiques.")
+            st.info("Please select at least one feature column.")
     else:
-        st.warning("Aucune donnée n'a été chargée. Veuillez d'abord charger un fichier dans la section 'Chargement des données'.")
+        st.warning("No data has been loaded. Please load a file first in the 'Data Loading' section.")

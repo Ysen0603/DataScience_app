@@ -3,36 +3,36 @@ import pandas as pd
 from utils.data_utils import load_excel_or_csv
 
 def load_data():
-    st.header("Chargement des données")
+    st.header("Data Loading")
     
-    uploaded_file = st.file_uploader("Choisissez un fichier Excel ou CSV", type=["xlsx", "csv"])
+    uploaded_file = st.file_uploader("Choose an Excel or CSV file", type=["xlsx", "csv"])
     
     if uploaded_file is not None:
         try:
             df = load_excel_or_csv(uploaded_file)
             st.session_state.data = df
             st.session_state.original_data = df.copy()  # Stocke une copie des données originales
-            st.success("Fichier chargé avec succès!")
+            st.success("File loaded successfully!")
             
-            st.subheader("Aperçu des données")
+            st.subheader("Data Preview")
             st.write(df.head())
             
-            st.subheader("Informations sur le dataset")
+            st.subheader("Dataset Information")
             st.write(df.describe())
             
         except Exception as e:
-            st.error(f"Une erreur s'est produite lors du chargement du fichier: {e}")
+            st.error(f"An error occurred while loading the file: {e}")
     elif 'data' in st.session_state and st.session_state.data is not None:
-        st.success("Données précédemment chargées disponibles.")
-        st.subheader("Aperçu des données")
+        st.success("Previously loaded data available.")
+        st.subheader("Data Preview")
         st.write(st.session_state.data.head())
         
-        st.subheader("Informations sur le dataset")
+        st.subheader("Dataset Information")
         try:
             st.write(st.session_state.data.describe())
         except Exception as e:
-            st.error(f"Une erreur s'est produite lors de l'affichage des informations sur le dataset: {e}")
+            st.error(f"An error occurred while displaying dataset information: {e}")
     else:
-        st.info("Veuillez télécharger un fichier pour commencer.")
+        st.info("Please upload a file to start.")
 
     

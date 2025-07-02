@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler
+import numpy as np
 
 def encode_categorical(df, columns, method):
     if method == "One-Hot Encoding":
@@ -21,13 +22,13 @@ def normalize_data(df, columns, method):
     return df
 
 def handle_missing_values(df, columns, method):
-    if method == "Supprimer":
+    if method == "Delete":
         return df.dropna(subset=columns)
-    elif method == "Moyenne":
+    elif method == "Mean":
         imputer = SimpleImputer(strategy='mean')
-    elif method == "Médiane":
+    elif method == "Median":
         imputer = SimpleImputer(strategy='median')
-    elif method == "Valeur la plus fréquente":
+    elif method == "Most Frequent Value":
         imputer = SimpleImputer(strategy='most_frequent')
     
     df[columns] = imputer.fit_transform(df[columns])

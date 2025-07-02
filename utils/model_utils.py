@@ -11,23 +11,23 @@ from sklearn.preprocessing import label_binarize
 
 def train_model(X_train, X_test, y_train, model_type, algorithm, use_grid_search=False):
     if model_type == "Classification":
-        if algorithm == "Régression logistique":
+        if algorithm == "Logistic Regression":
             model = LogisticRegression()
             param_grid = {'C': [0.001, 0.01, 0.1, 1, 10, 100]}
-        elif algorithm == "Arbre de décision":
+        elif algorithm == "Decision Tree":
             model = DecisionTreeClassifier()
             param_grid = {'max_depth': [3, 5, 10, None], 'min_samples_split': [2, 5, 10]}
-        elif algorithm == "Forêt aléatoire":
+        elif algorithm == "Random Forest":
             model = RandomForestClassifier()
             param_grid = {'n_estimators': [10, 50, 100], 'max_depth': [3, 5, 10, None]}
     else:
-        if algorithm == "Régression linéaire":
+        if algorithm == "Linear Regression":
             model = LinearRegression()
-            param_grid = {}  # Pas de paramètres à optimiser pour la régression linéaire
-        elif algorithm == "Arbre de décision":
+            param_grid = {}  # No parameters to optimize for linear regression
+        elif algorithm == "Decision Tree":
             model = DecisionTreeRegressor()
             param_grid = {'max_depth': [3, 5, 10, None], 'min_samples_split': [2, 5, 10]}
-        elif algorithm == "Forêt aléatoire":
+        elif algorithm == "Random Forest":
             model = RandomForestRegressor()
             param_grid = {'n_estimators': [10, 50, 100], 'max_depth': [3, 5, 10, None]}
 
@@ -35,7 +35,7 @@ def train_model(X_train, X_test, y_train, model_type, algorithm, use_grid_search
         grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy' if model_type == "Classification" else 'neg_mean_squared_error')
         grid_search.fit(X_train, y_train)
         model = grid_search.best_estimator_
-        st.write("Meilleurs paramètres trouvés:", grid_search.best_params_)
+        st.write("Best parameters found:", grid_search.best_params_)
     else:
         model.fit(X_train, y_train)
 
@@ -89,7 +89,7 @@ def visualize_results(model, X_test, y_test, model_type):
             plt.legend(loc="lower right")
             return plt
     else:
-        # Graphique des résidus
+        # Residuals plot
         y_pred = model.predict(X_test)
         residuals = y_test - y_pred
         

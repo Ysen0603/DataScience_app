@@ -3,13 +3,13 @@ from PG import data_loading, data_exploration, data_preprocessing, data_grouping
 
 def main():
     st.set_page_config(
-        page_title="Analyse de données et ML",
+        page_title="Data Analysis and ML",
         page_icon="📊",
         layout="wide",
         initial_sidebar_state="expanded"
     )
 
-    # Styles CSS personnalisés
+    # Custom CSS styles
     st.markdown("""
     <style>
     .main .block-container {
@@ -32,16 +32,16 @@ def main():
     </style>
     """, unsafe_allow_html=True)
 
-    st.title("Analyse de données et apprentissage automatique")
+    st.title("Data Analysis and Machine Learning")
 
-    # Menu de navigation avec icônes
+    # Navigation menu with icons
     menu = {
-        "Chargement des données": "📥",
-        "Exploration des données": "🔍",
-        "Prétraitement": "🛠️",
-        "Groupement": "🔗",
-        "Entraînement du modèle": "🤖",
-        "Sauvegarde du modèle": "💾"
+        "Data Loading": "📥",
+        "Data Exploration": "🔍",
+        "Preprocessing": "🛠️",
+        "Grouping": "🔗",
+        "Model Training": "🤖",
+        "Model Saving": "💾"
     }
     choice = st.sidebar.selectbox(
         "Navigation",
@@ -49,62 +49,62 @@ def main():
         format_func=lambda x: f"{menu[x]} {x}"
     )
 
-    # Ajoutez une séparation visuelle
+    # Add a visual separator
     st.sidebar.markdown("---")
 
-    # Informations sur l'application
-    st.sidebar.info("Cette application permet d'analyser des données et d'entraîner des modèles de machine learning.")
+    # Application information
+    st.sidebar.info("This application allows you to analyze data and train machine learning models.")
 
-    # Barre de progression
+    # Progress bar
     progress_mapping = {
-        "Chargement des données": 1,
-        "Exploration des données": 2,
-        "Prétraitement": 3,
-        "Groupement": 4,
-        "Entraînement du modèle": 5,
-        "Sauvegarde du modèle": 6
+        "Data Loading": 1,
+        "Data Exploration": 2,
+        "Preprocessing": 3,
+        "Grouping": 4,
+        "Model Training": 5,
+        "Model Saving": 6
     }
     progress = st.progress(0)
     progress.progress(progress_mapping[choice] / len(menu))
 
-    # Initialisation de l'état de session
+    # Session state initialization
     if 'data' not in st.session_state:
         st.session_state.data = None
     if 'model' not in st.session_state:
         st.session_state.model = None
 
-    # Navigation avec gestion d'état
-    if choice == "Chargement des données":
+    # Navigation with state management
+    if choice == "Data Loading":
         data_loading.load_data()
-    elif choice == "Exploration des données":
+    elif choice == "Data Exploration":
         if st.session_state.data is not None:
             data_exploration.explore_data()
         else:
-            st.warning("Veuillez d'abord charger des données.")
-    elif choice == "Prétraitement":
+            st.warning("Please load data first.")
+    elif choice == "Preprocessing":
         if st.session_state.data is not None:
             data_preprocessing.preprocess_data()
         else:
-            st.warning("Veuillez d'abord charger des données.")
-    elif choice == "Groupement":
+            st.warning("Please load data first.")
+    elif choice == "Grouping":
         if st.session_state.data is not None:
             data_grouping.group_data()
         else:
-            st.warning("Veuillez d'abord charger des données.")
-    elif choice == "Entraînement du modèle":
+            st.warning("Please load data first.")
+    elif choice == "Model Training":
         if st.session_state.data is not None:
             model_training.train_model_page()
         else:
-            st.warning("Veuillez d'abord charger et prétraiter les données.")
-    elif choice == "Sauvegarde du modèle":
+            st.warning("Please load and preprocess data first.")
+    elif choice == "Model Saving":
         if st.session_state.model is not None:
             model_saving.save_load_model()
         else:
-            st.warning("Veuillez d'abord entraîner un modèle.")
+            st.warning("Please train a model first.")
 
-    # Pied de page
+    # Footer
     st.markdown("---")
-    st.markdown("Développé avec ❤️ par Ennaya Yassine")
+    st.markdown("Developed with ❤️ by Ennaya Yassine")
 
 if __name__ == "__main__":
     main()
