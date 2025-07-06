@@ -43,8 +43,8 @@ To set up and run this project locally, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Ysen0603/app
-    cd app
+    git clone https://github.com/Ysen0603/DataScience_app
+    cd DataScience_app
     ```
 
 2.  **Create a virtual environment (recommended):**
